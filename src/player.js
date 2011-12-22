@@ -5,13 +5,26 @@ var currentProcess = null
 
 
 var spotifyPlayer = "/Users/pgerlach/work/perso/noisebox/spotify_cmd/bin/spotify_cmd"
-
+var mplayer = "/Applications/VLC.app/Contents/MacOS/VLC"
 
 var play = function(content) {
 	console.log("will play " + JSON.stringify(content))
 
 	stop()
-	currentProcess = spawn(spotifyPlayer, [content.uri]);
+
+	switch (content.type)
+	{
+		case "spotify":
+			currentProcess = spawn(spotifyPlayer, [content.uri]);
+			break ;
+		case "http-mp3":
+			currentProcess = spawn(mplayer, [content.uri]);
+			break ;
+		default:
+			console.log('bad content type')
+			return ;
+	}
+
 	currentProcess.on('exit', function(code) {
 		console.log('process exited')
 		if (0 != code) {
@@ -29,10 +42,12 @@ var stop = function() {
 }
 
 var playpause = function() {
+	// ... how ?
 	console.log("will play/pause")
 }
 
 var next = function() {
+	// if playing spotify-playlist, yes. if not -> stop.
 	console.log("will next")
 }
 
