@@ -1,5 +1,6 @@
 var express = require("express"),
-	http = require("http")
+	http = require("http"),
+	player = require('./player')
 
 var app = express.createServer();
 
@@ -30,6 +31,7 @@ app.get('/tag/:idTag', function(req, res){
 		var content = JSON.parse(data);
 		if (null != content) {
 			res.send("Tqg " + req.params.idTag + ' plays ' + JSON.stringify(content.content))
+			player.play(content.content)
 		}
 		else {
 		    res.send("Seen tag " + req.params.idTag + ' but no can haz content');
