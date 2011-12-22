@@ -1,0 +1,10 @@
+{
+  "name": "noisebox-maestro",
+  "description": "The maestro of the noisebox",
+  "author": "Pierre-Rudolf Gerlach <pgerlach@gmail.com>",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "2.5.x"
+  },
+  "engine": "node 0.4.x"
+}
