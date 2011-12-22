@@ -1,5 +1,32 @@
+spawn = require('child_process').spawn
+
+// the process running, if not null.
+var currentProcess = null
+
+
+var spotifyPlayer = "/Users/pgerlach/work/perso/noisebox/spotify_cmd/bin/spotify_cmd"
+
+
 var play = function(content) {
 	console.log("will play " + JSON.stringify(content))
+
+	stop()
+	currentProcess = spawn(spotifyPlayer, [content.uri]);
+	currentProcess.on('exit', function(code) {
+		console.log('process exited')
+		if (0 != code) {
+			console.log('exit code: ' + code)
+		}
+		currentProcess = null
+	})
+}
+
+var stop = function() {
+	// should stop the process currentProcess
+	if (null != currentProcess) {
+		currentProcess.kill()
+		currentProcess = null
+	}
 }
 
 var playpause = function() {
@@ -24,6 +51,7 @@ var vminus = function() {
 
 
 exports.play = play
+exports.stop = stop
 exports.playpause = playpause
 exports.next = next
 exports.prev = prev

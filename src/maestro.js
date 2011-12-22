@@ -46,6 +46,11 @@ app.get('/cmd/playpause', function(req, res){
     res.send("play/pause");
 });
 
+app.get('/cmd/stop', function(req, res){
+	player.stop()
+    res.send("stop");
+});
+
 app.get('/cmd/next', function(req, res){
 	player.next()
     res.send("next");
