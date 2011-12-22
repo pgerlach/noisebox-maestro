@@ -42,22 +42,27 @@ app.get('/tag/:idTag', function(req, res){
 });
 
 app.get('/cmd/playpause', function(req, res){
+	player.playpause()
     res.send("play/pause");
 });
 
 app.get('/cmd/next', function(req, res){
+	player.next()
     res.send("next");
 });
 
 app.get('/cmd/prev', function(req, res){
+	player.prev()
     res.send("prev");
 });
 
 app.get('/cmd/vplus', function(req, res){
+	player.vplus()
     res.send("vplus");
 });
 
 app.get('/cmd/vminus', function(req, res){
+	player.vminus()
     res.send("vminus");
 });
 
