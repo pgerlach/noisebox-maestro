@@ -6,5 +6,8 @@
   "dependencies": {
     "express": "2.5.x"
   },
-  "engine": "node 0.4.x"
+  "engine": "node 0.4.x",
+  "scripts": {
+  	"start": "node src/maestro.js"
+  }
 }
