@@ -71,4 +71,5 @@ app.get('/cmd/vminus', function(req, res){
     res.send("vminus");
 });
 
+player.init()
 app.listen(4242);

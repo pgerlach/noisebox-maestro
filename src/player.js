@@ -3,9 +3,21 @@ spawn = require('child_process').spawn
 // the process running, if not null.
 var currentProcess = null
 
+// the current volume
+var volume = 40
+var volumeMax = 150
+var volumeIncr = 10
+
 
 var spotifyPlayer = "/Users/pgerlach/work/perso/noisebox/spotify_cmd/bin/spotify_cmd"
 var mplayer = "/Applications/VLC.app/Contents/MacOS/VLC"
+
+
+var init = function() {
+	console.log("init volume to " + volume)
+	spawn("amixer", ["sset", "Speaker", volume]);
+	// we can forget about him
+}
 
 var play = function(content) {
 	console.log("will play " + JSON.stringify(content))
@@ -57,13 +69,28 @@ var prev = function() {
 
 var vplus = function() {
 	console.log("will vplus")
+	volume += volumeIncr
+	if (volume > volumeMax) {
+		volume = volumeMax
+	}
+	spawn("amixer", ["sset", "Speaker", volume]);
+	console.log("increase volume to " + volume)
 }
 
 var vminus = function() {
 	console.log("will vminus")
+	if (volume > volumeIncr) {
+		volume -= volumeIncr
+	}
+	else {
+		volume = 0
+	}
+	spawn("amixer", ["sset", "Speaker", volume]);
+	console.log("decrease volume to " + volume)
 }
 
 
+exports.init = init
 exports.play = play
 exports.stop = stop
 exports.playpause = playpause
