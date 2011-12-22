@@ -17,7 +17,6 @@ var play = function(content) {
 		if (0 != code) {
 			console.log('exit code: ' + code)
 		}
-		currentProcess = null
 	})
 }
 
