@@ -30,7 +30,7 @@ app.get('/tag/:idTag', function(req, res){
 	  apiRes.on('end', function () {
 		var content = JSON.parse(data);
 		if (null != content) {
-			res.send("Tqg " + req.params.idTag + ' plays ' + JSON.stringify(content.content))
+			res.send("Tag " + req.params.idTag + ' plays ' + JSON.stringify(content.content))
 			player.play(content.content)
 		}
 		else {
