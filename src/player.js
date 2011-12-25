@@ -1,4 +1,4 @@
-spawn = require('child_process').spawn
+var spawn = require('child_process').spawn
 
 // the process running, if not null.
 var currentProcess = null
