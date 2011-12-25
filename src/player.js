@@ -1,4 +1,5 @@
-var spawn = require('child_process').spawn
+var spawn = require('child_process').spawn,
+	config = require('./config').config
 
 // the process running, if not null.
 var currentProcess = null
