@@ -1,6 +1,7 @@
 var express = require("express"),
 	http = require("http"),
-	player = require('./player')
+	player = require('./player'),
+	config = require('./config') ;
 
 var app = express.createServer();
 

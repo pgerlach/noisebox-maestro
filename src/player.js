@@ -1,4 +1,5 @@
-var spawn = require('child_process').spawn
+var spawn = require('child_process').spawn,
+	config = require('./config').config
 
 // the process running, if not null.
 var currentProcess = null
@@ -27,7 +28,7 @@ var play = function(content) {
 	switch (content.type)
 	{
 		case "spotify":
-			currentProcess = spawn(spotifyPlayer, [content.uri]);
+			currentProcess = spawn(spotifyPlayer, [config.spotify.username, config.spotify.password, content.uri]);
 			break ;
 		case "http-mp3":
 			currentProcess = spawn(mplayer, [content.uri]);
