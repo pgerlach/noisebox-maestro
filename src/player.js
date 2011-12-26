@@ -1,5 +1,6 @@
 var spawn = require('child_process').spawn,
-	config = require('./config').config
+	config = require('./config').config,
+	http = require('http')
 
 // the process running, if not null.
 var currentProcess = null
@@ -37,13 +38,6 @@ var play = function(content) {
 			console.log('bad content type')
 			return ;
 	}
-
-	currentProcess.on('exit', function(code) {
-		console.log('process exited')
-		if (0 != code) {
-			console.log('exit code: ' + code)
-		}
-	})
 }
 
 var stop = function() {
@@ -93,8 +87,21 @@ var vminus = function() {
 
 // uris is an array of uris
 var spotifyLaunchPlayer = function (uris) {
-	console.log('would launch ' + uris);
-//	currentProcess = spawn(spotifyPlayer, [config.spotify.username, config.spotify.password].concat(uris));
+	console.log('would launch ' + spotifyPlayer + ' ' + [config.spotify.username, config.spotify.password].concat(uris).join(' '));
+	currentProcess = spawn(spotifyPlayer, [config.spotify.username, config.spotify.password].concat(uris));
+//	currentProcess = spawn('/bin/echo', ['coucou']);
+//	console.log('currentProcess: ' + JSON.stringify(currentProcess));
+	if (null != currentProcess) {
+		currentProcess.on('exit', function(code) {
+			console.log('process exited')
+			if (0 != code) {
+				console.log('exit code: ' + code)
+			}
+		})
+	}
+	else {
+		console.log('currentProcess = null');
+	}
 }
 
 var spotifyHandleContent = function (params) {
@@ -104,6 +111,8 @@ var spotifyHandleContent = function (params) {
 	}
 	else if (params.uri.match('^spotify:album:')) {
 		// http://ws.spotify.com/lookup/1/.json?uri=spotify:album:6G9fHYDCoyEErUkHrFYfs4&extras=track
+
+		console.log('spotify album. querying metadata api');
 
 		// ask spotify metadata api for album tracks
 		var options = {
@@ -115,22 +124,24 @@ var spotifyHandleContent = function (params) {
 
 		var data = ''
 
+		console.log('url: http://' + options.host + options.path);
+
 	 	var apiReq = http.request(options, function(apiRes) {
 			console.log('STATUS: ' + apiRes.statusCode);
 			apiRes.setEncoding('utf8');
 			apiRes.on('data', function (chunk) {
-				console.log('BODY: ' + chunk);
+				console.log('http request data. BODY: ' + chunk);
 				data += chunk;
 			});
 			apiRes.on('end', function () {
+				console.log('http request end');
 				var content = JSON.parse(data);
 				if (null != content) {
-					tracksArray = []
+					tracksArray = [];
 					// TODO handle exception
-					for (var i=0; i<content.album.tracks.length; ++i) {
-						tracksArray = tracksArray.concat(content.album.tracks[i].href);
-					}
-					spotifyLaunchPlayer([tracksArray])
+					content.album.tracks.forEach(function(e) {tracksArray.push(e.href);});
+					console.log('array: ' + tracksArray)
+					spotifyLaunchPlayer(tracksArray)
 				}
 				else {
 				    console.log('No haz undertand spotify API json response');
@@ -138,6 +149,7 @@ var spotifyHandleContent = function (params) {
 				}
 			});
 		});
+		apiReq.end();
 	}
 	else {
 		console.log('unhandled spotify uri type');
