@@ -1,4 +1,3 @@
 - get idBox from somewhere and pass it in urls
-- handle albums for spotify (although playlists handling will have to be done in spotify_cmd, so probably everything including album handling will be done there at the end)
 - provide feedback about what's happening (depends two way communcation with arduino)
 - announce the box on the LAN using Bonjour/Zeroconf (http://github.com/agnat/node_mdns)
