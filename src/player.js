@@ -28,7 +28,7 @@ var play = function(content) {
 	switch (content.type)
 	{
 		case "spotify":
-			currentProcess = spawn(spotifyPlayer, [config.spotify.username, config.spotify.password, content.uri]);
+			spotifyHandleContent(content.params);
 			break ;
 		case "http-mp3":
 			currentProcess = spawn(mplayer, [content.uri]);
@@ -88,6 +88,60 @@ var vminus = function() {
 	}
 	spawn("amixer", ["sset", "Speaker", volume]);
 	console.log("decrease volume to " + volume)
+}
+
+
+// uris is an array of uris
+var spotifyLaunchPlayer = function (uris) {
+	console.log('would launch ' + uris);
+//	currentProcess = spawn(spotifyPlayer, [config.spotify.username, config.spotify.password].concat(uris));
+}
+
+var spotifyHandleContent = function (params) {
+	// track of album ? (playlists will have to be handled by spotify_cmd itself)
+	if (params.uri.match('^spotify:track:')) {
+		spotifyLaunchPlayer([params.uri])
+	}
+	else if (params.uri.match('^spotify:album:')) {
+		// http://ws.spotify.com/lookup/1/.json?uri=spotify:album:6G9fHYDCoyEErUkHrFYfs4&extras=track
+
+		// ask spotify metadata api for album tracks
+		var options = {
+		  host: 'ws.spotify.com',
+		  port: 80,
+		  path: '/lookup/1/.json?uri=' + params.uri + '&extras=track',
+		  method: 'GET'
+		};
+
+		var data = ''
+
+	 	var apiReq = http.request(options, function(apiRes) {
+			console.log('STATUS: ' + apiRes.statusCode);
+			apiRes.setEncoding('utf8');
+			apiRes.on('data', function (chunk) {
+				console.log('BODY: ' + chunk);
+				data += chunk;
+			});
+			apiRes.on('end', function () {
+				var content = JSON.parse(data);
+				if (null != content) {
+					tracksArray = []
+					// TODO handle exception
+					for (var i=0; i<content.album.tracks.length; ++i) {
+						tracksArray = tracksArray.concat(content.album.tracks[i].href);
+					}
+					spotifyLaunchPlayer([tracksArray])
+				}
+				else {
+				    console.log('No haz undertand spotify API json response');
+				    console.log(data);
+				}
+			});
+		});
+	}
+	else {
+		console.log('unhandled spotify uri type');
+	}
 }
 
 
