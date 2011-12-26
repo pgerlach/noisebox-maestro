@@ -54,12 +54,17 @@ var playpause = function() {
 }
 
 var next = function() {
-	// if playing spotify-playlist, yes. if not -> stop.
 	console.log("will next")
+	if (null != currentProcess) {
+		currentProcess.stdin.write('next\n');
+	}
 }
 
 var prev = function() {
 	console.log("will prev")
+	if (null != currentProcess) {
+		currentProcess.stdin.write('prev\n');
+	}
 }
 
 var vplus = function() {
