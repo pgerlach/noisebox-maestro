@@ -49,8 +49,10 @@ var stop = function() {
 }
 
 var playpause = function() {
-	// ... how ?
 	console.log("will play/pause")
+	if (null != currentProcess) {
+		currentProcess.stdin.write('playpause\n');
+	}
 }
 
 var next = function() {
