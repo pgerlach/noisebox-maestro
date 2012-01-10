@@ -1,7 +1,9 @@
 var express = require("express"),
 	http = require("http"),
 	player = require('./player'),
-	config = require('./config') ;
+	querystring = require('querystring'),
+	_ = require('underscore'),
+	config = require('./config').config;
 
 var app = express.createServer();
 
@@ -12,10 +14,17 @@ app.get('/', function(req, res){
 });
 
 app.get('/tag/:idTag', function(req, res){
+
+	var additionalParams = {};
+	if ('boxid' in config) {
+		additionalParams.boxid = config.boxid;
+	}
+	var additionalParamsStr = _.isEmpty(additionalParams) ? '' : ('?' + querystring.stringify(additionalParams));
+
 	var options = {
 	  host: serverHost,
 	  port: 80,
-	  path: '/tag/' + req.params.idTag,
+	  path: '/tag/' + req.params.idTag + additionalParamsStr,
 	  method: 'GET'
 	};
 
@@ -73,4 +82,12 @@ app.get('/cmd/vminus', function(req, res){
 });
 
 player.init()
+
+if (undefined != config.boxid) {
+	console.log("Boxid : [" + config.boxid + "]");
+}
+else {
+	console.log("No boxid defined.");
+}
+
 app.listen(4242);
