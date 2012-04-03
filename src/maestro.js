@@ -3,17 +3,19 @@ var express = require("express"),
 	player = require('./player'),
 	querystring = require('querystring'),
 	_ = require('underscore'),
-	config = require('./config').config;
+	config = require('./config').config,
+	led = require('./leds');
 
 var app = express.createServer();
-
-var serverHost = "diynoisebox.herokuapp.com"
 
 app.get('/', function(req, res){
     res.send("Let's play some music !");
 });
 
 app.get('/tag/:idTag', function(req, res){
+
+	console.log('Seen tag ' + idTag);
+	led.blink('green');
 
 	var additionalParams = {};
 	if ('boxid' in config) {
@@ -22,8 +24,8 @@ app.get('/tag/:idTag', function(req, res){
 	var additionalParamsStr = _.isEmpty(additionalParams) ? '' : ('?' + querystring.stringify(additionalParams));
 
 	var options = {
-	  host: serverHost,
-	  port: 80,
+	  host: config.server_host,
+	  port: config.server_port,
 	  path: '/tag/' + req.params.idTag + additionalParamsStr,
 	  method: 'GET'
 	};
@@ -40,11 +42,12 @@ app.get('/tag/:idTag', function(req, res){
 	  apiRes.on('end', function () {
 		var content = JSON.parse(data);
 		if (null != content) {
-			res.send("Tag " + req.params.idTag + ' plays ' + JSON.stringify(content.content))
-			player.play(content.content)
+			res.send("Tag " + req.params.idTag + ' plays ' + JSON.stringify(content.content));
+			player.play(content.content);
 		}
 		else {
 		    res.send("Seen tag " + req.params.idTag + ' but no can haz content');
+		    led.blink('red');
 		}
 	  });
 	});
@@ -82,6 +85,7 @@ app.get('/cmd/vminus', function(req, res){
 });
 
 player.init()
+leds.init()
 
 if (undefined != config.boxid) {
 	console.log("Boxid : [" + config.boxid + "]");

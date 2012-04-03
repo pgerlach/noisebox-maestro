@@ -11,8 +11,8 @@ var volumeMax = 150
 var volumeIncr = 10
 
 
-var spotifyPlayer = "/Users/pgerlach/work/perso/noisebox/spotify_cmd/bin/spotify_cmd"
-var mplayer = "/Applications/VLC.app/Contents/MacOS/VLC"
+var spotifyPlayer = "/home/root/spotify_cmd/bin/spotify_cmd"
+var mplayer = "/home/root/noisebox-player/noisebox-player.sh"
 
 
 var init = function() {
@@ -20,6 +20,11 @@ var init = function() {
 	spawn("amixer", ["sset", "Speaker", volume]);
 	// we can forget about him
 }
+
+var isPlaying() {
+	return (null == currentProcess)
+}
+
 
 var play = function(content) {
 	console.log("will play " + JSON.stringify(content))
@@ -32,7 +37,7 @@ var play = function(content) {
 			spotifyHandleContent(content.params);
 			break ;
 		case "http-mp3":
-			currentProcess = spawn(mplayer, [content.uri]);
+			httpMp3HandleContent(content.params);
 			break ;
 		default:
 			console.log('bad content type')
@@ -104,6 +109,25 @@ var spotifyLaunchPlayer = function (uris) {
 			if (0 != code) {
 				console.log('exit code: ' + code)
 			}
+			currentProcess = null;
+		})
+	}
+	else {
+		console.log('currentProcess = null');
+	}
+}
+
+
+var httpMp3HandleContent = function(param) {
+	currentProcess = spawn(mplayer, [content.params]);
+
+	if (null != currentProcess) {
+		currentProcess.on('exit', function(code) {
+			console.log('process exited')
+			if (0 != code) {
+				console.log('exit code: ' + code)
+			}
+			currentProcess = null;
 		})
 	}
 	else {
