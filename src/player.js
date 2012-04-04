@@ -45,6 +45,10 @@ var stop = function() {
 	// should stop the process currentProcess
 	if (null != currentProcess) {
 		currentProcess.stdin.write('stop\n');
+		// workaround for the time being
+		spawn('killall', ['mplayer']);
+		spawn('killall', ['spotify_cmd']);
+		spawn('killall', ['noisebox-player.sh']);
 //		currentProcess.kill()
 		currentProcess = null
 	}
