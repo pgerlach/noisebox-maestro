@@ -19,11 +19,7 @@ var init = function() {
 	console.log("init volume to " + volume)
 	spawn("amixer", ["sset", "Speaker", volume]);
 	// we can forget about him
-}
-
-var isPlaying() {
-	return (null == currentProcess)
-}
+};
 
 
 var play = function(content) {
@@ -48,10 +44,11 @@ var play = function(content) {
 var stop = function() {
 	// should stop the process currentProcess
 	if (null != currentProcess) {
-		currentProcess.kill()
+		currentProcess.stdin.write('stop\n');
+//		currentProcess.kill()
 		currentProcess = null
 	}
-}
+};
 
 var playpause = function() {
 	console.log("will play/pause")
@@ -118,8 +115,8 @@ var spotifyLaunchPlayer = function (uris) {
 }
 
 
-var httpMp3HandleContent = function(param) {
-	currentProcess = spawn(mplayer, [content.params]);
+var httpMp3HandleContent = function(params) {
+	currentProcess = spawn(mplayer, [params.uri]);
 
 	if (null != currentProcess) {
 		currentProcess.on('exit', function(code) {

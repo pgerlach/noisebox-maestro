@@ -4,7 +4,7 @@ var express = require("express"),
 	querystring = require('querystring'),
 	_ = require('underscore'),
 	config = require('./config').config,
-	led = require('./leds');
+	leds = require('./leds');
 
 var app = express.createServer();
 
@@ -14,8 +14,8 @@ app.get('/', function(req, res){
 
 app.get('/tag/:idTag', function(req, res){
 
-	console.log('Seen tag ' + idTag);
-	led.blink('green');
+	console.log('Seen tag ' + req.params.idTag);
+	leds.blink('green');
 
 	var additionalParams = {};
 	if ('boxid' in config) {
@@ -47,7 +47,7 @@ app.get('/tag/:idTag', function(req, res){
 		}
 		else {
 		    res.send("Seen tag " + req.params.idTag + ' but no can haz content');
-		    led.blink('red');
+		    leds.blink('red');
 		}
 	  });
 	});
